@@ -1,106 +1,121 @@
 <template>
-  <f7-page>
-    <f7-navbar title="Form" back-link="Back"></f7-navbar>
-    <f7-block-title>Form Example</f7-block-title>
-    <f7-list form>
-      <f7-list-item>
-        <f7-label>Name</f7-label>
-        <f7-input type="text" placeholder="Name"></f7-input>
-      </f7-list-item>
-      <f7-list-item>
-        <f7-label>E-mail</f7-label>
-        <f7-input type="email" placeholder="E-mail"></f7-input>
-      </f7-list-item>
-      <f7-list-item>
-        <f7-label>URL</f7-label>
-        <f7-input type="url" placeholder="URL"></f7-input>
-      </f7-list-item>
-      <f7-list-item>
-        <f7-label>Password</f7-label>
-        <f7-input type="password" placeholder="Password"></f7-input>
-      </f7-list-item>
-      <f7-list-item>
-        <f7-label>Phone</f7-label>
-        <f7-input type="tel" placeholder="Phone"></f7-input>
-      </f7-list-item>
-      <f7-list-item>
-        <f7-label>Gender</f7-label>
-        <f7-input type="select">
-          <option selected>Male</option>
-          <option>Female</option>
-        </f7-input>
-      </f7-list-item>
-      <f7-list-item>
-        <f7-label>Birth date</f7-label>
-        <f7-input type="date" placeholder="Birth date" value="2014-04-30"></f7-input>
-      </f7-list-item>
-      <f7-list-item title="Toggle">
-        <f7-toggle slot="after"></f7-toggle>
-      </f7-list-item>
-      <f7-list-item>
-        <f7-label>Slider</f7-label>
-        <f7-input>
-          <f7-range min="0" max="100" value="50" step="1" :label="true"></f7-range>
-        </f7-input>
-      </f7-list-item>
-      <f7-list-item>
-        <f7-label>Textarea</f7-label>
-        <f7-input type="textarea" placeholder="Bio"></f7-input>
-      </f7-list-item>
-      <f7-list-item>
-        <f7-label>Resizable</f7-label>
-        <f7-input type="textarea" placeholder="Bio" resizable></f7-input>
-      </f7-list-item>
-    </f7-list>
-
-    <f7-block-title>Checkbox group</f7-block-title>
-    <f7-list form>
-      <f7-list-item v-for="n in 3" :key="n" checkbox name="my-checkbox" :value="n" :title="'Checkbox ' + n"></f7-list-item>
-    </f7-list>
-
-    <f7-block-title>Radio buttons group</f7-block-title>
-    <f7-list form>
-      <f7-list-item v-for="n in 3" :key="n" radio name="my-radio" :checked="n === 1" :value="n" :title="'Radio ' + n"></f7-list-item>
-    </f7-list>
-
-    <f7-block-title>Buttons</f7-block-title>
-    <f7-block strong>
-      <f7-row tag="p">
-        <f7-button class="col">Button</f7-button>
-        <f7-button class="col" fill>Fill</f7-button>
-      </f7-row>
-      <f7-row tag="p">
-        <f7-button class="col" raised>Raised</f7-button>
-        <f7-button class="col" raised fill>Raised Fill</f7-button>
-      </f7-row>
-      <f7-row tag="p">
-        <f7-button class="col" round>Round</f7-button>
-        <f7-button class="col" round fill>Round Fill</f7-button>
-      </f7-row>
-      <f7-row tag="p">
-        <f7-button class="col" outline>Outline</f7-button>
-        <f7-button class="col" round outline>Outline Round</f7-button>
-      </f7-row>
-      <f7-row tag="p">
-        <f7-button class="col" small outline>Small</f7-button>
-        <f7-button class="col" small round outline>Small Round</f7-button>
-      </f7-row>
-      <f7-row tag="p">
-        <f7-button class="col" small fill>Small</f7-button>
-        <f7-button class="col" small round fill>Small Round</f7-button>
-      </f7-row>
-      <f7-row tag="p">
-        <f7-button class="col" big raised>Big</f7-button>
-        <f7-button class="col" big fill raised>Big Fill</f7-button>
-      </f7-row>
-      <f7-row tag="p">
-        <f7-button class="col" big fill raised color="red">Big Red</f7-button>
-        <f7-button class="col" big fill raised color="green">Big Green</f7-button>
-      </f7-row>
-    </f7-block>
-  </f7-page>
+    <f7-page>
+        <f7-navbar :title="truck ? 'Редактирование' : 'Добавить Грузовик'" back-link="Back"></f7-navbar>
+        <f7-list form>
+            <f7-list-item>
+                <f7-label>Название</f7-label>
+                <f7-input type="text"
+                          :value="formData.nameTruck"
+                          @input="formData.nameTruck = $event.target.value"
+                          placeholder="Название"></f7-input>
+            </f7-list-item>
+            <f7-list-item>
+                <f7-label>Цена</f7-label>
+                <f7-input type="number"
+                          :value="formData.price"
+                          @input="formData.price = $event.target.value"
+                          placeholder="Цена"></f7-input>
+            </f7-list-item>
+            <f7-list-item>
+                <f7-label>Комментарий</f7-label>
+                <f7-input type="textarea"
+                          :value="formData.comment"
+                          @input="formData.comment = $event.target.value"
+                          placeholder="Комментарий"></f7-input>
+            </f7-list-item>
+        </f7-list>
+        <f7-block>
+            <f7-button class="col" raised fill color="green" @click="truck ? patch() : add()">{{ truck ?
+                'Редактировать' : 'Добавить' }}
+            </f7-button>
+        </f7-block>
+        <div v-if="loading" class="preloader-overlay">
+            <div class="preloader color-blue"></div>
+        </div>
+    </f7-page>
 </template>
 
 <script>
-export default {}
+
+    import Service from '../service';
+
+    export default {
+
+        data() {
+            return {
+                truck: null,
+                formData: {
+                    nameTruck: "",
+                    comment: "",
+                    price: 0
+                },
+                loading: false
+            };
+        },
+
+        methods: {
+
+            validate() {
+                if (this.formData.nameTruck.trim() === "" || this.formData.price === 0) {
+                    Service.notify(this, '<h3>Заполните поля</h3>', 'Следующие поля обязательны для заполнения: Название, Цена');
+                    return false;
+                }
+                return true;
+            },
+
+            patch() {
+
+                this.loading = true;
+
+                if (this.validate())
+
+                    Service.axios()
+                        .patch($params.patchTruck + this.truck.id, this.formData, {
+                            headers: {"Content-Type": "application/x-www-form-urlencoded"}
+                        })
+                        .then(response => {
+                            if (response.statusText !== 'OK') {
+                                Service.notify(this, '<h3>Ошибка</h3>', 'Не удалось загрузить данные.');
+                                this.loading = false;
+                                return false;
+                            }
+                            this.$f7router.navigate('/');
+
+                        });
+
+                else this.loading = false;
+            },
+
+            add() {
+
+                this.loading = true;
+
+                if (this.validate())
+
+                    Service.axios()
+                        .post($params.addTruck, this.formData, {headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"}
+                        })
+                        .then(response => {
+                            if (response.statusText !== 'OK') {
+                                Service.notify(this, '<h3>Ошибка</h3>', 'Не удалось загрузить данные.');
+                                this.loading = false;
+                                return false;
+                            }
+                            this.$f7router.navigate('/');
+                            this.loading = false
+                        });
+
+                else this.loading = false;
+            }
+
+        },
+
+        created() {
+            this.truck = (typeof this.$root.truck !== "undefined" && this.$root.truck) ? this.$root.truck : null;
+            this.formData.nameTruck = this.truck ? this.truck.nameTruck : "";
+            this.formData.comment = this.truck ? this.truck.comment : "";
+            this.formData.price = this.truck ? this.truck.price : 0;
+        }
+    }
 </script>

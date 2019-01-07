@@ -13,6 +13,10 @@ import Routes from './routes.js';
 // Import App Component
 import App from './app.vue';
 
+import params from './params';
+
+global.$params = params;
+
 // Init F7 Vue Plugin
 Vue.use(Framework7Vue, Framework7);
 
